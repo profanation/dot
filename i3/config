@@ -39,19 +39,18 @@ floating_modifier $mod
 
 # start a terminal
 #bindsym $mod+Return exec i3-sensible-terminal
-bindsym $mod+Return exec gnome-terminal
+bindsym $mod+Return exec rxvt-unicode
 
 # kill focused window
 bindsym $mod+Shift+q kill
 
 # start dmenu (a program launcher)
-bindsym $mod+d exec dmenu_run
-#bindsym $mod+d exec rofi -show run -lines 3 -eh 2 -width 100 -padding 80 -opacity 85 -bw 0 -bc $bg-color -bg $bg-color -fg $text-color -hlbg $bg-color -hlfg #9575cd -font "System San Francisco Display 18"
+bindsym $mod+d exec "rofi -show run -modi run,window -config ~/.cache/wal/colors-rofi-dark.rasi"
+#binsym $mod+p $SHELL -c 'rofi -e "haha"'
 #bindsym $mod+d exec cerebro
 # There also is the (new) i3-dmenu-desktop which only displays applications
 # shipping a .desktop file. It is a wrapper around dmenu, so you need that
 # installed.
-# bindsym $mod+d exec --no-startup-id i3-dmenu-desktop
 
 # change focus
 bindsym $mod+j focus left
@@ -188,8 +187,8 @@ bindsym $mod+r mode "resize"
 # window colors
 #                       border              background         text                 indicator
 client.focused          $bg-color           $bg-color          $text-color          #00ff00
-client.unfocused        $incative-bg-color $inactive-bg-color $inactive-text-color #00ff00
-client.focused_inactive $incative-bg-color $inactive-bg-color $inactive-text-color #00ff00
+client.unfocused        $incative-bg-color  $inactive-bg-color $inactive-text-color #00ff00
+client.focused_inactive $incative-bg-color  $inactive-bg-color $inactive-text-color #00ff00
 client.urgent           $urgent-bg-color    $urgent-bg-color   $text-color          #00ff00
 
 
@@ -224,14 +223,14 @@ bindsym XF86AudioLowerVolume exec --no-startup-id pactl set-sink-volume 0 -5%
 bindsym XF86AudioMute exec --no-startup-id pactl set-sink-mute 0 toggle
 
 # screen brightness controls
-exec_always --no-startup-id "chmod 777 /sys/class/backlight/intel_backlight/brightness"
+exec_always --no-startup-id sudo chmod 777 /sys/class/backlight/intel_backlight/brightness
 bindsym XF86MonBrightnessUp exec light -A 10
 bindsym XF86MonBrightnessDown exec light -U 10
 
 
 #keyboard brightness controls 
 
-exec_always --no-startup-id "chmod 777 /sys/class/leds/smc::kbd_backlight/brightness"
+exec_always --no-startup-id sudo chmod 777 /sys/class/leds/smc::kbd_backlight/brightness
 
 bindsym XF86KbdBrightnessUp exec light -s sysfs/leds/smc::kbd\_backlight -A 10   #increase Kbd brightness
 
@@ -240,9 +239,10 @@ bindsym XF86KbdBrightnessDown exec light -s sysfs/leds/smc::kbd\_backlight -U 10
 
 
 
-exec_always "setxkbmap -layout us,ru"
-exec_always setxkbmap -option grp:alt_shift_toggle
-bindsym ctrl+Shift+l exec i3lock -n -e  --color 475263
+exec_always setxkbmap -option grp:win_space_toggle -layout us,ru -variant mac,mac
+
+bindsym ctrl+Shift+l exec i3lock-fancy -f Hack-Regular-Nerd-Font-Complete-Mono
+#bindsym ctrl+Shift+l exec i3lock -n -e  --color 475263
 
 exec --no-startup-id compton -cb --config ~/.config/compton/compton.conf
 
@@ -255,6 +255,5 @@ exec_always rclone mount google: ~/drive
 
 #binsym $mod+Shift+] exec --nostartup-id qutebrowser
 
-
-
-#binsym --release Shift+s exec --no-startup-id  ~/Scripts/screenArea
+bindsym $mod+Ctrl+4 exec maim Shots/$(date +%m%T).png -s 
+exec --nostartup-id  feh --bg-fill ./.config/wallpapers/20320.jpg
