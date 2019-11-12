@@ -1,0 +1,63 @@
+#!/bin/bash
+
+getBattState() {
+
+  acpi -b | grep "Battery 0" | awk '{print $3}' | sed 's/,//g'
+
+}
+
+getattPrcnt() {
+
+  acpi -b | grep "Battery 0" | awk '{print $4}' | sed 's/%,//g'
+
+}
+
+getTimeRem() {
+
+  acpi -b | grep "Battery 0" | awk '{print $5}'
+
+}
+
+remTime=$(getTimeRem)
+
+
+if [[ "$(getBattState)" == "Charging" ]]; then
+
+  echo -n " "
+
+elif [[ "$(getBattState)" == "Full" ]]; then
+
+  echo -n FULL" "
+
+fi
+
+if [[ $(getattPrcnt) -ge 85 ]]; then
+
+  echo -n " " 
+
+elif [[ $(getattPrcnt) -le 85 ]] && [[ $(getattPrcnt) -ge 50 ]]; then
+
+  echo -n " "
+
+elif [[ $(getattPrcnt) -le 50 ]] && [[ $(getattPrcnt) -ge 30 ]]; then
+
+  echo -n " "
+
+elif [[ $(getattPrcnt) -le 30 ]] && [[ $(getattPrcnt) -ge 10 ]]; then 
+
+  echo -n " "
+
+elif [[ $(getattPrcnt) -le 10 ]]; then
+
+  #echo -n -e '\033[1;31m''\033[0m'" "
+
+  echo -n -e " "
+fi
+
+
+echo -n $(getattPrcnt)"% "
+
+echo -n ${remTime:0:5}
+echo ""
+#Battery 0: Full, 100%
+#Battery 0: Discharging, 99%, 01:56:22 remaining

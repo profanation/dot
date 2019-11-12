@@ -1,0 +1,47 @@
+#!/bin/bash
+
+# Simple script to transport stream links via ssh (scp)
+# 1st you need to generate rsa keys to login automaticly
+# scrip gonna put it in /storage/videos/$NAME.strm
+
+TMP="$HOME/${2}.strm"
+USR="root"
+IP="192.168.88.121"
+KODIPATH="/storage/videos/"
+CIAN="\033[0;36m"                                                                  
+NC="\033[0m"
+
+function connCheck() {
+  
+  ping -c 1 $IP &> /dev/null
+
+}  
+
+
+if [[ $# -ne 2 ]]; then
+    echo "Usage: kfeed <URL> NAME"
+    exit 1
+else
+  echo $1 > $TMP
+  echo -n "cheking kodi server avaliability..."
+
+  if $(connCheck); then 
+    echo -e "${CIAN}OK${NC}"
+  else
+    echo -e "${CIAN}FAIL${NC}"
+    exit 2
+  fi
+fi
+
+echo starting scp...
+
+if scp $TMP $USR@$IP:$KODIPATH/; then
+  echo -e "${CIAN}DONE${NC}"
+else
+  echo SCP fail
+  exit 3
+fi
+
+echo -n "Cleaning up temp files..."
+  rm -f $TMP
+echo -e "${CIAN}OK${NC}"

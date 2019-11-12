@@ -1,0 +1,45 @@
+#!/bin/bash
+#This script stolen from:
+# https://unix.stackexchange.com/questions/455183/mpv-how-to-get-information-about-media-being-played-through-command-line
+
+getPos() {
+
+  echo '{ "command": ["get_property_string", "time-pos"] }' | socat - /tmp/mpvsocket | jq .data | tr '"' ' ' | cut -d'.' -f 1
+}
+
+getDuration() {
+
+  echo '{ "command": ["get_property_string", "duration"] }' | socat - /tmp/mpvsocket | jq .data | tr '"' ' ' | cut -d'.' -f 1
+}
+
+
+
+isPaused() {
+
+  echo '{ "command": ["get_property_string", "pause"] }' | socat - /tmp/mpvsocket | jq .data | tr '"' ' ' | cut -d'.' -f 1 | sed 's/ //g'
+}
+
+ratio=$(echo "scale=1; ($(getPos)/$(getDuration)*10)" | bc)
+
+if [[ "$(isPaused)" == "yes"  ]]; then 
+  echo -n 
+elif [[ "$(isPaused)" == "no"  ]]; then
+  echo -n 契
+fi
+#echo ${ratio:0:1}
+echo -n "["
+for ((i=0 ; i<10 ; i++)); do
+  if [[ "$i" -eq "${ratio%.*}" ]]; then
+      echo -n "+"
+  elif [[ "$i" -ne "${ratio%.*}" ]]; then
+      echo -n "-"
+  fi
+done
+echo "]"
+#echo $(getPos)
+#echo $(getDuration)
+#printf '%d:%02d:%02d' $(($(getPos)/3600)) $(($(getPos)%3600/60)) $(($(getPos)%60))
+#printf ' %d:%02d:%02d\n' $(($(getDuration)/3600)) $(($(getDuration)%3600/60)) $(($(getDuration)%60))
+
+
+
